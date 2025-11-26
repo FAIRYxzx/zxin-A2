@@ -35,7 +35,7 @@ public class Visitor extends Person {
             return;
         }
         if (visitorID.length() != 10) {
-            System.out.println("Error: The visitor ID is invalid. Its length must be 8 digits！");
+            System.out.println("Error: The visitor ID is invalid. Its length must be 10 digits！");
             return;
         }
 
@@ -47,7 +47,7 @@ public class Visitor extends Person {
 
         String suffix = visitorID.substring(1);
         if (!suffix.matches("\\d{9}")) {
-            System.out.println("Error: The visitor ID is invalid. The last 7 digits must be numbers!");
+            System.out.println("Error: The visitor ID is invalid. The last 9 digits must be numbers!");
             return;
         }
 
