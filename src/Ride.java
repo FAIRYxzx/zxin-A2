@@ -1,6 +1,8 @@
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class Ride {
-
+    private Queue<Visitor> waitingLine;
     private String rideName;
     private String rideParkArea;
     private String rideType;
@@ -11,6 +13,7 @@ public class Ride {
         this.rideParkArea = "Unspecified park";
         this.rideType = "No specified type";
         this.operator = null;
+        this.waitingLine = new LinkedList<>();
     }
 
 
@@ -20,8 +23,59 @@ public class Ride {
         this.setRideParkArea(rideParkArea);
         this.setRideType(rideType);
         this.setOperator(operator);
+        this.waitingLine = new LinkedList<>();
     }
 
+    public void addVisitorToQueue(Visitor visitor) {
+        if (visitor == null) {
+            System.out.println("Failed to add: The visitor object is empty and cannot be added to the queue!");
+            return;
+        }
+        if (visitor.getVisitorID() == null || visitor.getVisitorID().trim().isEmpty()) {
+            System.out.println("Failed to add: The visitor ID was not set, and they cannot be added to the [" + this.rideName + "] queue！");
+            return;
+        }
+        boolean isAdded = waitingLine.offer(visitor);
+        if (isAdded) {
+            System.out.println("Successful addition: Visitor [" + visitor.getName() + "](ID：" + visitor.getVisitorID() + ")joins the [" + this.rideName + "] waiting queue");
+        } else {
+            System.out.println("Failed to add: visitor [" + visitor.getName() + "] failed to join the [" + this.rideName + "] queue. Please try again!");
+        }
+    }
+
+    public Visitor removeVisitorFromQueue() {
+        if (waitingLine.isEmpty()) {
+            System.out.println("Failure to remove：[" + this.rideName + "] waiting queue is empty, unable to remove visitor！");
+            return null;
+        }
+
+        Visitor removedVisitor = waitingLine.poll();
+        System.out.println("Remove success：Visitor [" + removedVisitor.getName() + "](ID：" + removedVisitor.getVisitorID() + ") from the queue[" + this.rideName + "] removed");
+        return removedVisitor;
+    }
+
+    public void printQueue() {
+        System.out.println("\n===== [" + this.rideName + "] Details of the waiting queue =====");
+        System.out.println("Current number of visitor waiting：" + waitingLine.size());
+        if (waitingLine.isEmpty()) {
+            System.out.println("📭There are no waiting visitors at present");
+            System.out.println("====================================\n");
+            return;
+        }
+        int visitorIndex = 1;
+        for (Visitor visitor : waitingLine) {
+            System.out.println(visitorIndex + ". Name：" + visitor.getName()
+                    + " | MembershipType：" + visitor.getMembershipType()
+                    + " | Visitor ID：" + visitor.getVisitorID()
+                    + " | Age：" + visitor.getAge());
+            visitorIndex++;
+        }
+        System.out.println("====================================\n");
+    }
+
+    public Queue<Visitor> getWaitingQueue() {
+        return waitingLine;
+    }
 
     public String getRideName() {
         return rideName;
@@ -129,7 +183,6 @@ public class Ride {
                 "Name：" + rideName + "\n" +
                 "Affiliated park：" + rideParkArea + "\n" +
                 "Type：" + rideType + "\n" +
-                "Operator：" + (operator != null ? operator.getName() + "（park：" + operator.getParkArea() + "）" : "Unvalidated") + "\n" +
-                "园区一致性：" + parkConsistency;
+                "Operator：" + (operator != null ? operator.getName() + "（park：" + operator.getParkArea() + "）" : "Unvalidated");
     }
 }
