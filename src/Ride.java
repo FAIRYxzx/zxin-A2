@@ -1,12 +1,12 @@
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.*;
 
-public class Ride {
+public class Ride implements  RideInterface{
     private Queue<Visitor> waitingLine;
     private String rideName;
     private String rideParkArea;
     private String rideType;
     private Employee operator;
+    private LinkedList<Visitor> rideHistory;
 
     public Ride() {
         this.rideName = "Unnamed facility";
@@ -14,8 +14,8 @@ public class Ride {
         this.rideType = "No specified type";
         this.operator = null;
         this.waitingLine = new LinkedList<>();
+        this.rideHistory = new LinkedList<>();
     }
-
 
     public Ride(String rideName, String rideParkArea, String rideType, Employee operator) {
 
@@ -24,6 +24,7 @@ public class Ride {
         this.setRideType(rideType);
         this.setOperator(operator);
         this.waitingLine = new LinkedList<>();
+        this.rideHistory = new LinkedList<>();
     }
 
     public void addVisitorToQueue(Visitor visitor) {
@@ -58,7 +59,7 @@ public class Ride {
         System.out.println("\n===== [" + this.rideName + "] Details of the waiting queue =====");
         System.out.println("Current number of visitor waiting：" + waitingLine.size());
         if (waitingLine.isEmpty()) {
-            System.out.println("📭There are no waiting visitors at present");
+            System.out.println("There are no waiting visitors at present");
             System.out.println("====================================\n");
             return;
         }
@@ -71,6 +72,112 @@ public class Ride {
             visitorIndex++;
         }
         System.out.println("====================================\n");
+    }
+
+    public void addVisitorToHistory(Visitor visitor) {
+        if (visitor == null) {
+            System.out.println("Failed to add to history: Visitor object is null!");
+            return;
+        }
+        String visitorId = visitor.getVisitorID();
+        if (visitorId == null || visitorId.trim().isEmpty()) {
+            System.out.println("Failed to add to history: Visitor ID is not set!");
+            return;
+        }
+
+        rideHistory.add(visitor);
+        System.out.println("Successfully added to history: Visitor [" + visitor.getName() + "] (ID:" + visitorId + ") | Total rides now: " + numberOfVisitors());
+    }
+
+    public boolean checkVisitorFromHistory(Visitor visitor) {
+        if (visitor == null || visitor.getVisitorID() == null) {
+            System.out.println("Error: Invalid visitor (null or no ID) for history check!");
+            return false;
+        }
+
+        Iterator<Visitor> iterator = rideHistory.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getVisitorID().equals(visitor.getVisitorID())) {
+                System.out.printf("Check Result: Visitor [%s] (ID: %s) is in the ride history.\n",
+                        visitor.getName(), visitor.getVisitorID());
+                return true;
+            }
+        }
+        System.out.printf("Check Result: Visitor [%s] (ID: %s) IS NOT in the ride history.\n",
+                visitor.getName(), visitor.getVisitorID());
+        return false;
+    }
+
+    public int numberOfVisitors() {
+        return rideHistory.size();
+    }
+
+    public void printRideHistory() {
+        System.out.println("\n===== [" + this.rideName + "] Ride History (Total Rides = " + numberOfVisitors() + ") =====");
+        System.out.println("Total ride times (all records): " + numberOfVisitors());
+        System.out.println("Number of unique visitors (by ID): " + getUniqueVisitorCount());
+        System.out.println("------------------------------------");
+
+        if (rideHistory.isEmpty()) {
+            System.out.println("No visitors in ride history yet.");
+            System.out.println("====================================\n");
+            return;
+        }
+
+        Map<String, Visitor> uniqueVisitorMap = new LinkedHashMap<>();
+        Map<String, Integer> visitCountMap = new LinkedHashMap<>();
+        Iterator<Visitor> iterator = rideHistory.iterator();
+
+        while (iterator.hasNext()) {
+            Visitor visitor = iterator.next();
+            String visitorId = visitor.getVisitorID();
+
+            if (!uniqueVisitorMap.containsKey(visitorId)) {
+                uniqueVisitorMap.put(visitorId, visitor);
+            }
+            visitCountMap.put(visitorId, visitCountMap.getOrDefault(visitorId, 0) + 1);
+        }
+
+
+
+        int recordIndex = 1;
+        for (Map.Entry<String, Integer> entry : visitCountMap.entrySet()) {
+            String visitorId = entry.getKey();
+            Visitor uniqueVisitor = uniqueVisitorMap.get(visitorId);
+            int visitCount = entry.getValue();
+
+            System.out.printf(recordIndex + ". Name: " + uniqueVisitor.getName()
+                            + " | Membership Type: " + uniqueVisitor.getMembershipType()
+                            + " | Visitor ID: " + uniqueVisitor.getVisitorID()
+                            + " | Age: " + uniqueVisitor.getAge()
+                            + " | Visit Count: " + visitCount+"\n");
+            recordIndex++;
+        }
+
+        System.out.println("====================================\n");
+    }
+
+    public void sortRideHistory() {
+        if (rideHistory.isEmpty()) {
+            System.out.println("Error: Cannot sort ride history, the history is empty!");
+            return;
+        }
+
+        Collections.sort(rideHistory, new VisitorComparator());
+        System.out.println("Successfully sorted ride history of [" + this.rideName + "]!");
+    }
+
+    public void runOneCycle(){
+
+    }
+
+    public int getUniqueVisitorCount() {
+        Set<String> uniqueVisitorIds = new HashSet<>();
+        Iterator<Visitor> iterator = rideHistory.iterator();
+        while (iterator.hasNext()) {
+            uniqueVisitorIds.add(iterator.next().getVisitorID());
+        }
+        return uniqueVisitorIds.size();
     }
 
     public Queue<Visitor> getWaitingQueue() {
@@ -92,7 +199,6 @@ public class Ride {
     public Employee getOperator() {
         return operator;
     }
-
 
     public void setRideName(String rideName) {
         if (rideName != null && !rideName.trim().isEmpty()) {
@@ -142,7 +248,6 @@ public class Ride {
         }
     }
 
-
     public void setOperator(Employee operator) {
 
         if (operator == null) {
@@ -171,6 +276,10 @@ public class Ride {
 
         this.operator = operator;
         System.out.println("The operator of the ride is set to：" + operator.getName() + "（Employee ID：" + operator.getEmployeeId() + "，Affiliated park：" + operatorPark + "）");
+    }
+
+    public LinkedList<Visitor> getRideHistory() {
+        return rideHistory;
     }
 
     @Override
