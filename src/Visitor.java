@@ -63,7 +63,7 @@ public class Visitor extends Person {
         this.visitorID = visitorID;
         USED_VISITOR_IDS.add(visitorID);
 
-        System.out.println("The visitor ID is set to：" + visitorID);
+        System.out.println("The visitor ID for " + getName() + " is set to：" + visitorID);
     }
 
 
@@ -84,7 +84,7 @@ public class Visitor extends Person {
         }
 
         this.membershipType = membershipType;
-        System.out.println("The membership type is set to：" + membershipType);
+        System.out.println("The membership type for " + getName() + " is set to：" + membershipType);
     }
 
 
