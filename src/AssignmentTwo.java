@@ -4,6 +4,7 @@ public class AssignmentTwo {
         demo.partThree();
         demo.partFourA();
         demo.partFourB();
+        demo.partFive();
     }
 
     public void partThree() {
@@ -100,6 +101,52 @@ public class AssignmentTwo {
     }
 
     public void partFive() {
+        System.out.println("\n===== Part 5 Demonstration =====");
+        Employee coasterOperator = new Employee(
+                "Mike Wilson",
+                32,
+                "13988889999",
+                "110101199203156789",
+                "AD12345",
+                "Ride Operator",
+                "Adventure Zone"
+        );
+        Ride jungleTrain = new Ride();
+        jungleTrain.setRideName("Jungle Train");
+        jungleTrain.setRideParkArea("Adventure Zone");
+        jungleTrain.setRideType("Family Rides");
+        jungleTrain.setMaxRider(4);
+        jungleTrain.setOperator(coasterOperator);
+
+        Visitor[] part5Visitors = new Visitor[]{
+                new Visitor("Amy Chen", 22, "13512345678", "110101200304051234", "O666666666", "Ordinary tourist"),
+                new Visitor("Bob Li", 28, "13612345678", "310101199704051234", "V000000000", "VIP"),
+                new Visitor("Cindy Wang", 25, "13712345678", "440101200004051234", "O777777777", "Ordinary tourist"),
+                new Visitor("David Zhang", 30, "13812345678", "510101199504051234", "S000000000", "SVIP"),
+                new Visitor("Ella Zhao", 24, "13912345678", "110101200104051234", "O888888888", "Ordinary tourist"),
+                new Visitor("Frank Liu", 27, "13523456789", "310101199804051234", "V777777777", "VIP"),
+                new Visitor("Grace He", 23, "13623456789", "440101200204051234", "O999999999", "Ordinary tourist"),
+                new Visitor("Henry Sun", 29, "13723456789", "510101199604051234", "S777777777", "SVIP"),
+                new Visitor("Ivy Ma", 26, "13823456789", "110101199904051234", "O000000000", "Ordinary tourist"),
+                new Visitor("Jack Zhou", 21, "13923456789", "310101200404051234", "V888888888", "VIP")
+        };
+
+        for (Visitor v : part5Visitors) {
+            jungleTrain.addVisitorToQueue(v);
+        }
+
+        System.out.println("\n=== Waiting Queue BEFORE running one cycle ===");
+        jungleTrain.printQueue();
+
+        System.out.println("\n=== Run one ride cycle ===");
+        jungleTrain.runOneCycle();
+
+        System.out.println("\n=== Waiting Queue AFTER running one cycle ===");
+        jungleTrain.printQueue();
+
+        System.out.println("\n=== Ride History AFTER running one cycle ===");
+        jungleTrain.printRideHistory();
+
     }
 
     public void partSix() {

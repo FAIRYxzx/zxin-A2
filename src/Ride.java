@@ -7,6 +7,9 @@ public class Ride implements  RideInterface{
     private String rideType;
     private Employee operator;
     private LinkedList<Visitor> rideHistory;
+    private int maxRider;
+    private int numOfCycles = 0;
+
 
     public Ride() {
         this.rideName = "Unnamed facility";
@@ -168,8 +171,34 @@ public class Ride implements  RideInterface{
     }
 
     public void runOneCycle(){
+        if (operator == null) {
+            System.out.println("Error: The [" + rideName + "] cannot operate without an operator assigned！");
+            return;
+        }
 
+        if (waitingLine.isEmpty()) {
+            System.out.println("Error: The [" + rideName + "] waiting queue is empty and cannot run！");
+            return;
+        }
+
+        if (maxRider < 1) {
+            System.out.println("Error: The [" + rideName + "] cannot operate without an effective visitor capacity (≥1 person) set！");
+            return;
+        }
+
+        int actualRiders = Math.min(maxRider, waitingLine.size());
+        System.out.println("Maximum visitor capacity for this Ride：" + maxRider + " | Remaining in the waiting queue：" + waitingLine.size() + " | Actual visitor capacity：" + actualRiders + "\n");
+
+        for (int i = 0; i < actualRiders; i++) {
+            Visitor rider = waitingLine.poll();
+            addVisitorToHistory(rider);
+        }
+
+        numOfCycles++;
+        System.out.println("=== The [" + rideName + "] round run of  " + numOfCycles + " has ended ===");
+        System.out.println("The current waiting queue is remaining：" + waitingLine.size() + " | Cumulative running times：" + numOfCycles + "\n");
     }
+
 
     public int getUniqueVisitorCount() {
         Set<String> uniqueVisitorIds = new HashSet<>();
@@ -198,6 +227,23 @@ public class Ride implements  RideInterface{
 
     public Employee getOperator() {
         return operator;
+    }
+
+    public int getMaxRider() {
+        return maxRider;
+    }
+
+    public void setMaxRider(int maxRider) {
+        if (maxRider >= 1) {
+            this.maxRider = maxRider;
+            System.out.println("[" + rideName + "] The maximum visitor capacity at a time is set to：" + maxRider);
+        } else {
+            System.out.println("Error: The maximum single visitor capacity must be at least one person！");
+        }
+    }
+
+    public int getNumOfCycles() {
+        return numOfCycles;
     }
 
     public void setRideName(String rideName) {
@@ -292,6 +338,8 @@ public class Ride implements  RideInterface{
                 "Name：" + rideName + "\n" +
                 "Affiliated park：" + rideParkArea + "\n" +
                 "Type：" + rideType + "\n" +
-                "Operator：" + (operator != null ? operator.getName() + "（park：" + operator.getParkArea() + "）" : "Unvalidated");
+                "Operator：" + (operator != null ? operator.getName() + "（park：" + operator.getParkArea() + "）" : "Unvalidated") + "\n" +
+                "Max Riders per Cycle：" + (maxRider >= 1 ? maxRider : "Unset") + "\n" +
+                "Total Cycles Run：" + numOfCycles;
     }
 }
