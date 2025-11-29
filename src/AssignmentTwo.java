@@ -5,6 +5,7 @@ public class AssignmentTwo {
         demo.partFourA();
         demo.partFourB();
         demo.partFive();
+        demo.partSix();
     }
 
     public void partThree() {
@@ -150,6 +151,28 @@ public class AssignmentTwo {
     }
 
     public void partSix() {
+        System.out.println("\n===== Part 6 Demonstration =====");
+        Ride exportRide = new Ride();
+        exportRide.setRideName("Carousel");
+        exportRide.setRideParkArea("Fairy Tale Area");
+        exportRide.setRideType("Family Rides");
+
+
+        Visitor v1 = new Visitor("Emma Watson",33,"13912345678","110101199103156789", "O666655555", "Ordinary tourist");
+        Visitor v2 = new Visitor("Liam Hemsworth",35,"13887654321","310101198907201234", "V777766666", "VIP");
+        Visitor v3 = new Visitor("Olivia Rodrigo", 21, "13765432109", "44010120030905789X", "S888877777", "SVIP");
+        Visitor v4 = new Visitor("Noah Centineo", 27, "13698765432", "510101199702103456", "O999988888", "Ordinary tourist");
+        Visitor v5 = new Visitor("Ava Max", 30, "13578901234", "110101199405156789", "V000011111", "VIP");
+
+        exportRide.addVisitorToHistory(v1);
+        exportRide.addVisitorToHistory(v2);
+        exportRide.addVisitorToHistory(v3);
+        exportRide.addVisitorToHistory(v4);
+        exportRide.addVisitorToHistory(v5);
+
+        String filePath = exportRide.getRideName().replace(" ", "_") + "_History.csv";
+        System.out.println("\n===Export ride history to csv file ===");
+        exportRide.exportRideHistory(filePath);
     }
 
     public void partSeven() {

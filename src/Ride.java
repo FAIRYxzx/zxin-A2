@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 public class Ride implements  RideInterface{
     private Queue<Visitor> waitingLine;
@@ -199,6 +200,55 @@ public class Ride implements  RideInterface{
         System.out.println("The current waiting queue is remaining：" + waitingLine.size() + " | Cumulative running times：" + numOfCycles + "\n");
     }
 
+    public void exportRideHistory(String filePath) {
+        if (rideHistory.isEmpty()) {
+            System.out.println("Error: The ride history is empty and no data can be exported！");
+            return;
+        }
+
+        Map<String, Integer> visitCountMap = new LinkedHashMap<>();
+        for (Visitor visitor : rideHistory) {
+            String visitorId = visitor.getVisitorID();
+            visitCountMap.put(visitorId, visitCountMap.getOrDefault(visitorId, 0) + 1);
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write("Name,Age,Phone,ID,Visitor ID,Membership Type,Number of runs");
+            writer.newLine();
+
+            for (Map.Entry<String, Integer> entry : visitCountMap.entrySet()) {
+                String visitorId = entry.getKey();
+                int rideCount = entry.getValue();
+
+                Visitor targetVisitor = null;
+                for (Visitor v : rideHistory) {
+                    if (v.getVisitorID().equals(visitorId)) {
+                        targetVisitor = v;
+                        break;
+                    }
+                }
+                if (targetVisitor == null) continue;
+
+                String name = targetVisitor.getName() != null ? targetVisitor.getName() : "";
+                String age = String.valueOf(targetVisitor.getAge());
+                String phone = targetVisitor.getPhone() != null ? targetVisitor.getPhone() : "";
+                String id = targetVisitor.getID() != null ? targetVisitor.getID() : "";
+                String visitorID = targetVisitor.getVisitorID() != null ? targetVisitor.getVisitorID() : "";
+                String membership = targetVisitor.getMembershipType() != null ? targetVisitor.getMembershipType() : "";
+
+                String csvLine = String.join(
+                        ",",
+                        name, age, phone, id, visitorID, membership, String.valueOf(rideCount)
+                );
+                writer.write(csvLine);
+                writer.newLine();
+            }
+
+            System.out.println("The history of rides has been successfully exported!\n" + "File path：" + filePath);
+        } catch (IOException e) {
+            System.out.println("Export failed：" + e.getMessage());
+        }
+    }
 
     public int getUniqueVisitorCount() {
         Set<String> uniqueVisitorIds = new HashSet<>();
