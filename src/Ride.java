@@ -250,6 +250,91 @@ public class Ride implements  RideInterface{
         }
     }
 
+    public void importRideHistory(String filePath) {
+        File csvFile = new File(filePath);
+        if (!csvFile.exists()) {
+            System.out.println("Import failed: The file does not exist in the specified path");
+            return;
+        }
+
+        int successCount = 0;
+        int failCount = 0;
+        rideHistory.clear();
+        Visitor.clearUsedIds();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+            String line;
+            boolean skipHeader = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (skipHeader) {
+                    skipHeader = false;
+                    continue;
+                }
+
+                String[] fields = line.split(",", -1);
+                if (fields.length != 7) {
+                    System.out.println("Skip invalid lines (incorrect number of fields, 7 fields required) ：" + line);
+                    failCount++;
+                    continue;
+                }
+
+                String name = fields[0].trim();
+                String ageStr = fields[1].trim();
+                String phone = fields[2].trim();
+                String id = fields[3].trim();
+                String visitorID = fields[4].trim();
+                String membership = fields[5].trim();
+                String rideCountStr = fields[6].trim();
+
+                if (name.isEmpty() || visitorID.isEmpty() || membership.isEmpty() || rideCountStr.isEmpty()) {
+                    System.out.println("Skip invalid lines (required fields are left blank)：" + line);
+                    failCount++;
+                    continue;
+                }
+
+                int age;
+                try {
+                    age = Integer.parseInt(ageStr);
+                } catch (NumberFormatException e) {
+                    System.out.println("Skip invalid lines (age format error)：" + line);
+                    failCount++;
+                    continue;
+                }
+
+                int rideCount;
+                try {
+                    rideCount = Integer.parseInt(rideCountStr);
+                    if (rideCount < 1) rideCount = 1;
+                } catch (NumberFormatException e) {
+                    System.out.println("Skip invalid lines (incorrect format for the number of rides)：" + line);
+                    failCount++;
+                    continue;
+                }
+                Visitor visitor = new Visitor();
+                visitor.setName(name);
+                visitor.setAge(age);
+                visitor.setPhone(phone);
+                visitor.setID(id);
+                visitor.setMembershipType(membership);
+                visitor.setVisitorID(visitorID);
+
+                if (visitor.getVisitorID() != null && visitor.getMembershipType() != null) {
+                    for (int i = 0; i < rideCount; i++) {
+                        rideHistory.add(visitor);
+                        successCount++;
+                    }
+                } else {
+                    System.out.println("Skip invalid visitor data：" + line);
+                    failCount++;
+                }
+            }
+
+            System.out.println("Import completed！Success: " + successCount + "  records | Failure：" + failCount + " records");
+        } catch (IOException e) {
+            System.out.println("Import failed：" + e.getMessage());
+        }
+    }
     public int getUniqueVisitorCount() {
         Set<String> uniqueVisitorIds = new HashSet<>();
         Iterator<Visitor> iterator = rideHistory.iterator();

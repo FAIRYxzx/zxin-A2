@@ -6,6 +6,7 @@ public class AssignmentTwo {
         demo.partFourB();
         demo.partFive();
         demo.partSix();
+        demo.partSeven();
     }
 
     public void partThree() {
@@ -158,8 +159,8 @@ public class AssignmentTwo {
         exportRide.setRideType("Family Rides");
 
 
-        Visitor v1 = new Visitor("Emma Watson",33,"13912345678","110101199103156789", "O666655555", "Ordinary tourist");
-        Visitor v2 = new Visitor("Liam Hemsworth",35,"13887654321","310101198907201234", "V777766666", "VIP");
+        Visitor v1 = new Visitor("Emma Watson",7,"13912345678","110101201803156789", "O666655555", "Ordinary tourist");
+        Visitor v2 = new Visitor("Liam Hemsworth",5,"13887654321","310101202007201234", "V777766666", "VIP");
         Visitor v3 = new Visitor("Olivia Rodrigo", 21, "13765432109", "44010120030905789X", "S888877777", "SVIP");
         Visitor v4 = new Visitor("Noah Centineo", 27, "13698765432", "510101199702103456", "O999988888", "Ordinary tourist");
         Visitor v5 = new Visitor("Ava Max", 30, "13578901234", "110101199405156789", "V000011111", "VIP");
@@ -176,6 +177,20 @@ public class AssignmentTwo {
     }
 
     public void partSeven() {
+        System.out.println("\n===== Part 7 Demonstration =====");
+
+        Ride importRide = new Ride();
+        importRide.setRideName("Imported Carousel");
+        importRide.setRideParkArea("Fairy Tale Area");
+        importRide.setRideType("Family Rides");
+
+
+        String filePath = "Carousel_History.csv";
+        importRide.importRideHistory(filePath);
+
+        System.out.println("\n=== The history of the ride after import ===");
+        importRide.printRideHistory();
+
     }
 }
 
