@@ -24,7 +24,7 @@ public class Ride implements  RideInterface{
     private LinkedList<Visitor> rideHistory;
     //Maximum passenger capacity per cycle
     private int maxRider;
-    //The number of running cycles
+    //The number of running cycles (Initially set to 0)
     private int numOfCycles = 0;
 
     /**
@@ -61,10 +61,12 @@ public class Ride implements  RideInterface{
      * @param visitor The visitor object to be added
      */
     public void addVisitorToQueue(Visitor visitor) {
+        //Verify whether the visitor object is empty (basic non-empty check)
         if (visitor == null) {
             System.out.println("Failed to add: The visitor object is empty and cannot be added to the queue!");
             return;
         }
+        //Verify whether the visitor ID is valid (The visitor ID is the unique identifier of the visitor)
         if (visitor.getVisitorID() == null || visitor.getVisitorID().trim().isEmpty()) {
             System.out.println("Failed to add: The visitor ID was not set, and they cannot be added to the [" + this.rideName + "] queue！");
             return;
@@ -83,6 +85,7 @@ public class Ride implements  RideInterface{
      * @return For removed visitors, return null when the queue is empty
      */
     public Visitor removeVisitorFromQueue() {
+        //Check whether the queue is empty
         if (waitingLine.isEmpty()) {
             System.out.println("Failure to remove：[" + this.rideName + "] waiting queue is empty, unable to remove visitor！");
             return null;
@@ -99,11 +102,13 @@ public class Ride implements  RideInterface{
     public void printQueue() {
         System.out.println("\n===== [" + this.rideName + "] Details of the waiting queue =====");
         System.out.println("Current number of visitor waiting：" + waitingLine.size());
+        //Empty queue processing
         if (waitingLine.isEmpty()) {
             System.out.println("There are no waiting visitors at present");
             System.out.println("====================================\n");
             return;
         }
+        //Traverse the queue and output the visitor information in sequence (the sequence numbers start from 1)
         int visitorIndex = 1;
         for (Visitor visitor : waitingLine) {
             System.out.println(visitorIndex + ". Name：" + visitor.getName()
@@ -116,20 +121,22 @@ public class Ride implements  RideInterface{
     }
 
     /**
-     * Add tourists to the visit history (including parameter verification)
+     * Add visitors to the visit history (including parameter verification)
      * @param visitor Visitors who have visited
      */
     public void addVisitorToHistory(Visitor visitor) {
+        // Verify whether the visitor object is empty
         if (visitor == null) {
             System.out.println("Failed to add to history: Visitor object is null!");
             return;
         }
+        // Extract the visitor ID and verify its validity
         String visitorId = visitor.getVisitorID();
         if (visitorId == null || visitorId.trim().isEmpty()) {
             System.out.println("Failed to add to history: Visitor ID is not set!");
             return;
         }
-
+        // Add to the history
         rideHistory.add(visitor);
         System.out.println("Successfully added to history: Visitor [" + visitor.getName() + "] (ID:" + visitorId + ") | Total rides now: " + numberOfVisitors());
     }
@@ -140,62 +147,75 @@ public class Ride implements  RideInterface{
      * @return Return true if it exists; otherwise, return false
      */
     public boolean checkVisitorFromHistory(Visitor visitor) {
+        // Parameter validity verification
         if (visitor == null || visitor.getVisitorID() == null) {
             System.out.println("Error: Invalid visitor (null or no ID) for history check!");
             return false;
         }
-
+        // Traverse the history record (using Iterator)
         Iterator<Visitor> iterator = rideHistory.iterator();
         while (iterator.hasNext()) {
+            // Match by VisitorID (Visitor ID is the unique identifier of the visitor)
             if (iterator.next().getVisitorID().equals(visitor.getVisitorID())) {
                 System.out.printf("Check Result: Visitor [%s] (ID: %s) is in the ride history.\n",
                         visitor.getName(), visitor.getVisitorID());
                 return true;
             }
         }
+
+        //Unmatched prompt
         System.out.printf("Check Result: Visitor [%s] (ID: %s) IS NOT in the ride history.\n",
                 visitor.getName(), visitor.getVisitorID());
         return false;
     }
 
+    /**
+     * Obtain the total number of records in the ride history (including repeated plays)
+     * @return The total number of historical records
+     */
     public int numberOfVisitors() {
         return rideHistory.size();
     }
 
+    /**
+     * Print the travel history and statistical information
+     */
     public void printRideHistory() {
         System.out.println("\n===== [" + this.rideName + "] Ride History (Total Rides = " + numberOfVisitors() + ") =====");
         System.out.println("Total ride times (all records): " + numberOfVisitors());
         System.out.println("Number of unique visitors (by ID): " + getUniqueVisitorCount());
         System.out.println("------------------------------------");
 
+        //Processing of empty history
         if (rideHistory.isEmpty()) {
             System.out.println("No visitors in ride history yet.");
             System.out.println("====================================\n");
             return;
         }
-
+        //Store the unique visitor (the visitor ID is the key to avoid repetition)
         Map<String, Visitor> uniqueVisitorMap = new LinkedHashMap<>();
+        //Store the number of visits for each visitor (the visitor ID is the key, and the number of visits is the value)
         Map<String, Integer> visitCountMap = new LinkedHashMap<>();
         Iterator<Visitor> iterator = rideHistory.iterator();
-
+        //Go through history and count the number of visits each visitor has made
         while (iterator.hasNext()) {
             Visitor visitor = iterator.next();
             String visitorId = visitor.getVisitorID();
-
+            //If you are a new visitor, add it to the Map of the only visitor
             if (!uniqueVisitorMap.containsKey(visitorId)) {
                 uniqueVisitorMap.put(visitorId, visitor);
             }
             visitCountMap.put(visitorId, visitCountMap.getOrDefault(visitorId, 0) + 1);
         }
 
-
-
+        //Output detailed statistics of each visitor
         int recordIndex = 1;
         for (Map.Entry<String, Integer> entry : visitCountMap.entrySet()) {
             String visitorId = entry.getKey();
-            Visitor uniqueVisitor = uniqueVisitorMap.get(visitorId);
-            int visitCount = entry.getValue();
+            Visitor uniqueVisitor = uniqueVisitorMap.get(visitorId); //Get detailed information about visitors
+            int visitCount = entry.getValue(); //Get play counts
 
+            //Formatted output
             System.out.printf(recordIndex + ". Name: " + uniqueVisitor.getName()
                             + " | Membership Type: " + uniqueVisitor.getMembershipType()
                             + " | Visitor ID: " + uniqueVisitor.getVisitorID()
@@ -207,51 +227,65 @@ public class Ride implements  RideInterface{
         System.out.println("====================================\n");
     }
 
+    /**
+     * Sort the ride history by membership type and age (membership type first, then age)
+     */
     public void sortRideHistory() {
+        //Empty history verification
         if (rideHistory.isEmpty()) {
             System.out.println("Error: Cannot sort ride history, the history is empty!");
             return;
         }
-
+        //Sorting (Comparator is implemented by VisitorComparator)
         Collections.sort(rideHistory, new VisitorComparator());
         System.out.println("Successfully sorted ride history of [" + this.rideName + "]!");
     }
 
+    /**
+     * One cycle of operating rides
+     */
     public void runOneCycle(){
+        //Verify whether the operator has been assigned
         if (operator == null) {
             System.out.println("Error: The [" + rideName + "] cannot operate without an operator assigned！");
             return;
         }
-
+        //Verify whether the waiting queue is empty
         if (waitingLine.isEmpty()) {
             System.out.println("Error: The [" + rideName + "] waiting queue is empty and cannot run！");
             return;
         }
-
+        //Verify whether the passenger capacity is valid
         if (maxRider < 1) {
             System.out.println("Error: The [" + rideName + "] cannot operate without an effective visitor capacity (≥1 person) set！");
             return;
         }
-
+        //Calculate the actual passenger capacity (whichever is the maximum passenger capacity or the smaller number of people in the waiting queue)
         int actualRiders = Math.min(maxRider, waitingLine.size());
         System.out.println("Maximum visitor capacity for this Ride：" + maxRider + " | Remaining in the waiting queue：" + waitingLine.size() + " | Actual visitor capacity：" + actualRiders + "\n");
-
+        //Retrieve visitors from the queue and add them to the history (complete one cycle)
         for (int i = 0; i < actualRiders; i++) {
             Visitor rider = waitingLine.poll();
             addVisitorToHistory(rider);
         }
-
+        //Update the number of running cycles
         numOfCycles++;
+        //Output the result of the periodic operation
         System.out.println("=== The [" + rideName + "] round run of  " + numOfCycles + " has ended ===");
         System.out.println("The current waiting queue is remaining：" + waitingLine.size() + " | Cumulative running times：" + numOfCycles + "\n");
     }
 
+    /**
+     * Export the play history as a CSV file
+     * @param filePath The path of the exported file
+     */
     public void exportRideHistory(String filePath) {
+        //Empty history verification
         if (rideHistory.isEmpty()) {
             System.out.println("Error: The ride history is empty and no data can be exported！");
             return;
         }
-
+        //Count the number of visits each visitor has made (grouped by VisitorID)
         Map<String, Integer> visitCountMap = new LinkedHashMap<>();
         for (Visitor visitor : rideHistory) {
             String visitorId = visitor.getVisitorID();
@@ -259,9 +293,10 @@ public class Ride implements  RideInterface{
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            //Write to the CSV table header
             writer.write("Name,Age,Phone,ID,Visitor ID,Membership Type,Number of runs");
             writer.newLine();
-
+            //Traverse the statistical results and write each line of data
             for (Map.Entry<String, Integer> entry : visitCountMap.entrySet()) {
                 String visitorId = entry.getKey();
                 int rideCount = entry.getValue();
@@ -274,14 +309,14 @@ public class Ride implements  RideInterface{
                     }
                 }
                 if (targetVisitor == null) continue;
-
+                //Handle null values (replace them with empty strings to avoid CSV format errors)
                 String name = targetVisitor.getName() != null ? targetVisitor.getName() : "";
                 String age = String.valueOf(targetVisitor.getAge());
                 String phone = targetVisitor.getPhone() != null ? targetVisitor.getPhone() : "";
                 String id = targetVisitor.getID() != null ? targetVisitor.getID() : "";
                 String visitorID = targetVisitor.getVisitorID() != null ? targetVisitor.getVisitorID() : "";
                 String membership = targetVisitor.getMembershipType() != null ? targetVisitor.getMembershipType() : "";
-
+                //Concatenate CSV lines (separated by commas)
                 String csvLine = String.join(
                         ",",
                         name, age, phone, id, visitorID, membership, String.valueOf(rideCount)
@@ -296,6 +331,11 @@ public class Ride implements  RideInterface{
         }
     }
 
+    /**
+     * Import the play history from the CSV file
+     * @param filePath The path of the imported file
+     * @param append Whether to append to the existing history (true: append; false: Overwrite)
+     */
     public void importRideHistory(String filePath,boolean append) {
         File csvFile = new File(filePath);
         if (!csvFile.exists()) {
@@ -303,33 +343,32 @@ public class Ride implements  RideInterface{
             return;
         }
 
-        int successCount = 0;
-        int failCount = 0;
+        int successCount = 0; //The number of successfully imported records (initially 0)
+        int failCount = 0; //Number of failure records (initially 0)
         rideHistory.clear();
         Visitor.clearUsedIds();
-
+        //If no additional is added, the existing history and used visitor ids will be cleared
         if (!append) {
             rideHistory.clear();
             Visitor.clearUsedIds();
         }
-
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
             String line;
-            boolean skipHeader = true;
+            boolean skipHeader = true; //Skip the header row
 
             while ((line = reader.readLine()) != null) {
                 if (skipHeader) {
                     skipHeader = false;
                     continue;
                 }
-
+                //Split the CSV rows (-1 to ensure that empty fields are not ignored)
                 String[] fields = line.split(",", -1);
-                if (fields.length != 7) {
+                if (fields.length != 7) { //Check the number of fields (must be 7)
                     System.out.println("Skip invalid lines (incorrect number of fields, 7 fields required) ：" + line);
                     failCount++;
                     continue;
                 }
-
+                //Extract the fields and trim the blank Spaces
                 String name = fields[0].trim();
                 String ageStr = fields[1].trim();
                 String phone = fields[2].trim();
@@ -338,12 +377,14 @@ public class Ride implements  RideInterface{
                 String membership = fields[5].trim();
                 String rideCountStr = fields[6].trim();
 
+                //Verify that the required fields are not blank
                 if (name.isEmpty() || visitorID.isEmpty() || membership.isEmpty() || rideCountStr.isEmpty()) {
                     System.out.println("Skip invalid lines (required fields are left blank)：" + line);
                     failCount++;
                     continue;
                 }
 
+                //Verify age format (integer)
                 int age;
                 try {
                     age = Integer.parseInt(ageStr);
@@ -353,15 +394,17 @@ public class Ride implements  RideInterface{
                     continue;
                 }
 
+                //Verify the format of the number of visits (integer and ≥1)
                 int rideCount;
                 try {
                     rideCount = Integer.parseInt(rideCountStr);
-                    if (rideCount < 1) rideCount = 1;
+                    if (rideCount < 1) rideCount = 1;  //The mandatory minimum is 1
                 } catch (NumberFormatException e) {
                     System.out.println("Skip invalid lines (incorrect format for the number of rides)：" + line);
                     failCount++;
                     continue;
                 }
+                //Create and set up visitor information
                 Visitor visitor = new Visitor();
                 visitor.setName(name);
                 visitor.setAge(age);
@@ -370,6 +413,8 @@ public class Ride implements  RideInterface{
                 visitor.setMembershipType(membership);
                 visitor.setVisitorID(visitorID);
 
+                //Verify whether the visitor ID and membership type are valid
+                //Add to history by play count (repeat adding rideCount times)
                 if (visitor.getVisitorID() != null && visitor.getMembershipType() != null) {
                     for (int i = 0; i < rideCount; i++) {
                         rideHistory.add(visitor);
@@ -386,10 +431,19 @@ public class Ride implements  RideInterface{
             System.out.println("Import failed：" + e.getMessage());
         }
     }
+
+    /**
+     * Parameterless import method (appended to the existing history by default)
+     * @param filePath The path of the imported file
+     */
     public void importRideHistory(String filePath) {
         importRideHistory(filePath, true);
     }
 
+    /**
+     * Obtain the number of unique visitors (de-duplicated by visitor ID)
+     * @return The number of unique visitors
+     */
     public int getUniqueVisitorCount() {
         Set<String> uniqueVisitorIds = new HashSet<>();
         Iterator<Visitor> iterator = rideHistory.iterator();
@@ -398,7 +452,7 @@ public class Ride implements  RideInterface{
         }
         return uniqueVisitorIds.size();
     }
-
+    //Getter and Setter methods
     public Queue<Visitor> getWaitingQueue() {
         return waitingLine;
     }
@@ -423,6 +477,10 @@ public class Ride implements  RideInterface{
         return maxRider;
     }
 
+    /**
+     * Set the maximum passenger capacity per cycle (it must be ≥1)
+     * @param maxRider Maximum passenger capacity
+     */
     public void setMaxRider(int maxRider) {
         if (maxRider >= 1) {
             this.maxRider = maxRider;
@@ -436,6 +494,10 @@ public class Ride implements  RideInterface{
         return numOfCycles;
     }
 
+    /**
+     * Set the name of the ride (non-empty verification)
+     * @param rideName Ride name
+     */
     public void setRideName(String rideName) {
         if (rideName != null && !rideName.trim().isEmpty()) {
             this.rideName = rideName;
@@ -445,12 +507,17 @@ public class Ride implements  RideInterface{
         }
     }
 
+    /**
+     * Set up the affiliated park (including consistency verification with the operator's park)
+     * @param rideParkArea Name of the park
+     */
     public void setRideParkArea(String rideParkArea) {
+        //Verify that the park is not empty
         if (rideParkArea == null || rideParkArea.trim().isEmpty()) {
             System.out.println("Error: The park where the ride belong cannot be empty！");
             return;
         }
-
+        //If an operator has been set up, verify the consistency of the park
         if (this.operator != null) {
             String operatorPark = this.operator.getParkArea();
 
@@ -462,16 +529,21 @@ public class Ride implements  RideInterface{
             }
         }
 
-
+        //Verification passed. Set the affiliated park
         this.rideParkArea = rideParkArea;
         System.out.println("The park where the ride belongs is set to：" + rideParkArea);
     }
 
+    /**
+     * Set the ride type (it must be one of the specified four types)
+     * @param rideType  Ride type
+     */
     public void setRideType(String rideType) {
         if (rideType == null || rideType.trim().isEmpty()) {
             System.out.println("Error: The type of rides cannot be empty！");
             return;
         }
+        //Verify whether the type is one of the four allowed types (case-insensitive)
         if (rideType.equalsIgnoreCase("Kids Rides") ||
                 rideType.equalsIgnoreCase("Family Rides") ||
                 rideType.equalsIgnoreCase("Thrill Rides") ||
@@ -484,32 +556,36 @@ public class Ride implements  RideInterface{
         }
     }
 
+    /**
+     * Set up operators (including consistency verification with the park to which the facility belongs)
+     * @param operator operator object
+     */
     public void setOperator(Employee operator) {
-
+        // Allow setting to empty (indicating no operator)
         if (operator == null) {
             this.operator = null;
             System.out.println("The rides have no operators and are temporarily closed!");
             return;
         }
-
+        //The verification operator's affiliated park has been set up
         String operatorPark = operator.getParkArea();
         if (operatorPark == null || operatorPark.trim().isEmpty()) {
             System.out.println("Error: The operator[" + operator.getName() + "]has not yet set the affiliated park and cannot be associated with the rides！");
             return;
         }
 
-
+        //The verification facility's affiliated park has been set up
         String ridePark = this.rideParkArea;
         if (ridePark == null || ridePark.trim().isEmpty() || "Unspecified park".equals(ridePark)) {
             System.out.println("Error: The rides have not yet been assigned to a specific park and thus cannot be associated with an operator[" + operator.getName() + "]！");
             return;
         }
-
+        //Verify the park consistency between the operator and the facility
         if (!operatorPark.equals(ridePark)) {
             System.out.println("Error: The operator's affiliated park is not the same as the ride's affiliated park and cannot be associated!");
             return;
         }
-
+        //Verification passed. Set the operator
         this.operator = operator;
         System.out.println("The operator of the ride is set to：" + operator.getName() + "（Employee ID：" + operator.getEmployeeId() + "，Affiliated park：" + operatorPark + "）");
     }
@@ -518,6 +594,10 @@ public class Ride implements  RideInterface{
         return rideHistory;
     }
 
+    /**
+     * Rewrite the toString method to return the complete information of the amusement facility
+     * @return A string containing information such as name, affiliated park, type, and operator
+     */
     @Override
     public String toString() {
         String parkConsistency = (operator != null && operator.getParkArea() != null)
