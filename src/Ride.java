@@ -1,17 +1,35 @@
+/**
+ * Student Name : Zexu Xin
+ * Student ID :24832928 / 202300408101
+ */
+
 import java.util.*;
 import java.io.*;
 
+/**
+ * Ride class that implements RideInterface
+ */
 public class Ride implements  RideInterface{
+    // Waiting queue (storing visitors waiting to visit)
     private Queue<Visitor> waitingLine;
+    //Name of Ride
     private String rideName;
+    //The affiliated park
     private String rideParkArea;
+    //Facility type (one of the four types: Kids Rides, Family Rides, Thrill Rides, and Science Rides)
     private String rideType;
+    //Operator (Employee object)
     private Employee operator;
+    // Visit History Record (Stores all visitors who have visited, including duplicates)
     private LinkedList<Visitor> rideHistory;
+    //Maximum passenger capacity per cycle
     private int maxRider;
+    //The number of running cycles
     private int numOfCycles = 0;
 
-
+    /**
+     * Parameterless constructor, initializing default values
+     */
     public Ride() {
         this.rideName = "Unnamed facility";
         this.rideParkArea = "Unspecified park";
@@ -21,6 +39,13 @@ public class Ride implements  RideInterface{
         this.rideHistory = new LinkedList<>();
     }
 
+    /**
+     * The parameterized construction method initializes the basic information of the rides
+     * @param rideName Name of ride
+     * @param rideParkArea The affiliated park
+     * @param rideType Ride type
+     * @param operator Ride Operator
+     */
     public Ride(String rideName, String rideParkArea, String rideType, Employee operator) {
 
         this.setRideName(rideName);
@@ -31,6 +56,10 @@ public class Ride implements  RideInterface{
         this.rideHistory = new LinkedList<>();
     }
 
+    /**
+     * Add visitors to the waiting queue (including parameter verification)
+     * @param visitor The visitor object to be added
+     */
     public void addVisitorToQueue(Visitor visitor) {
         if (visitor == null) {
             System.out.println("Failed to add: The visitor object is empty and cannot be added to the queue!");
@@ -40,6 +69,7 @@ public class Ride implements  RideInterface{
             System.out.println("Failed to add: The visitor ID was not set, and they cannot be added to the [" + this.rideName + "] queue！");
             return;
         }
+        //Add to the queue using offer
         boolean isAdded = waitingLine.offer(visitor);
         if (isAdded) {
             System.out.println("Successful addition: Visitor [" + visitor.getName() + "](ID：" + visitor.getVisitorID() + ")joins the [" + this.rideName + "] waiting queue");
@@ -48,17 +78,24 @@ public class Ride implements  RideInterface{
         }
     }
 
+    /**
+     * Remove from the waiting queue and return to the head of the queue as a visitor
+     * @return For removed visitors, return null when the queue is empty
+     */
     public Visitor removeVisitorFromQueue() {
         if (waitingLine.isEmpty()) {
             System.out.println("Failure to remove：[" + this.rideName + "] waiting queue is empty, unable to remove visitor！");
             return null;
         }
-
+        //Remove and return the element at the head of the queue
         Visitor removedVisitor = waitingLine.poll();
         System.out.println("Remove success：Visitor [" + removedVisitor.getName() + "](ID：" + removedVisitor.getVisitorID() + ") from the queue[" + this.rideName + "] removed");
         return removedVisitor;
     }
 
+    /**
+     * Print the detailed information of the waiting queue (number of people, information of each visitor)
+     */
     public void printQueue() {
         System.out.println("\n===== [" + this.rideName + "] Details of the waiting queue =====");
         System.out.println("Current number of visitor waiting：" + waitingLine.size());
@@ -78,6 +115,10 @@ public class Ride implements  RideInterface{
         System.out.println("====================================\n");
     }
 
+    /**
+     * Add tourists to the visit history (including parameter verification)
+     * @param visitor Visitors who have visited
+     */
     public void addVisitorToHistory(Visitor visitor) {
         if (visitor == null) {
             System.out.println("Failed to add to history: Visitor object is null!");
@@ -93,6 +134,11 @@ public class Ride implements  RideInterface{
         System.out.println("Successfully added to history: Visitor [" + visitor.getName() + "] (ID:" + visitorId + ") | Total rides now: " + numberOfVisitors());
     }
 
+    /**
+     * Check whether the visitor is in the travel history (judged by the visitor ID)
+     * @param visitor Visitor subjects to be inspected
+     * @return Return true if it exists; otherwise, return false
+     */
     public boolean checkVisitorFromHistory(Visitor visitor) {
         if (visitor == null || visitor.getVisitorID() == null) {
             System.out.println("Error: Invalid visitor (null or no ID) for history check!");
@@ -250,7 +296,7 @@ public class Ride implements  RideInterface{
         }
     }
 
-    public void importRideHistory(String filePath) {
+    public void importRideHistory(String filePath,boolean append) {
         File csvFile = new File(filePath);
         if (!csvFile.exists()) {
             System.out.println("Import failed: The file does not exist in the specified path");
@@ -261,6 +307,11 @@ public class Ride implements  RideInterface{
         int failCount = 0;
         rideHistory.clear();
         Visitor.clearUsedIds();
+
+        if (!append) {
+            rideHistory.clear();
+            Visitor.clearUsedIds();
+        }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
             String line;
@@ -335,6 +386,10 @@ public class Ride implements  RideInterface{
             System.out.println("Import failed：" + e.getMessage());
         }
     }
+    public void importRideHistory(String filePath) {
+        importRideHistory(filePath, true);
+    }
+
     public int getUniqueVisitorCount() {
         Set<String> uniqueVisitorIds = new HashSet<>();
         Iterator<Visitor> iterator = rideHistory.iterator();
