@@ -181,7 +181,7 @@ public class Ride implements  RideInterface{
      * Print the travel history and statistical information
      */
     public void printRideHistory() {
-        System.out.println("\n===== [" + this.rideName + "] Ride History (Total Rides = " + numberOfVisitors() + ") =====");
+        System.out.println("\n===== [" + this.rideName + "] Ride History (Total Ride times = " + numberOfVisitors() + ") =====");
         System.out.println("Total ride times (all records): " + numberOfVisitors());
         System.out.println("Number of unique visitors (by ID): " + getUniqueVisitorCount());
         System.out.println("------------------------------------");
