@@ -12,10 +12,10 @@ public class AssignmentTwo {
     public void partThree() {
         System.out.println("\n===== Part 3 Demonstration =====");
 
-        Ride rollerCoaster = new Ride();
-        rollerCoaster.setRideName("Roller coaster");
-        rollerCoaster.setRideParkArea("Adventure Zone");
-        rollerCoaster.setRideType("Thrill Rides");
+        Employee coasterOperator = new Employee(
+                "Mike", 32, "13988889999", "110101199203156789",
+                "AD12345", "Ride Operator", "Adventure Zone");
+        Ride rollerCoaster = new Ride("Roller coaster", "Adventure Zone", "Thrill Rides", coasterOperator);
 
         Visitor v1 = new Visitor("Jack", 25, "13411122333", "11010119900101123X", "O111111111", "Ordinary tourist");
         Visitor v2 = new Visitor("Jerry", 21, "13511122333", "310101199505154566", "V111111111", "VIP");
@@ -40,41 +40,43 @@ public class AssignmentTwo {
     }
 
     public void partFourA() {
-            System.out.println("\n===== Part 4A Demonstration =====");
+        System.out.println("\n===== Part 4A Demonstration =====");
 
-            Ride ferrisWheel = new Ride();
-            ferrisWheel.setRideName("Giant Ferris Wheel");
-            ferrisWheel.setRideParkArea("Fairy Tale Area");
-            ferrisWheel.setRideType("Family Rides");
+        Employee ferrisOperator = new Employee(
+                "Lisa", 28, "13877776666", "310101199605127890",
+                "FA45678", "Ride Operator", "Fairy Tale Area");
+        Ride ferrisWheel = new Ride(
+                "Giant Ferris Wheel", "Fairy Tale Area", "Family Rides", ferrisOperator);
 
-            Visitor v1 = new Visitor("Alice", 28, "13912345678", "110101199702034567", "O333333333", "Ordinary tourist");
-            Visitor v2 = new Visitor("Bob", 35, "13887654321", "310101199005127890", "V333333333", "VIP");
-            Visitor v3 = new Visitor("Charlie", 19, "13765432109", "440106200508201234", "S333333333", "SVIP");
-            Visitor v4 = new Visitor("Diana", 24, "13698765432", "440304199911156789", "O444444444", "Ordinary tourist");
-            Visitor v5 = new Visitor("Ethan", 30, "13578901234", "510104199304059876", "V444444444", "VIP");
+        Visitor v1 = new Visitor("Alice", 28, "13912345678", "110101199702034567", "O333333333", "Ordinary tourist");
+        Visitor v2 = new Visitor("Bob", 35, "13887654321", "310101199005127890", "V333333333", "VIP");
+        Visitor v3 = new Visitor("Charlie", 19, "13765432109", "440106200508201234", "S333333333", "SVIP");
+        Visitor v4 = new Visitor("Diana", 24, "13698765432", "440304199911156789", "O444444444", "Ordinary tourist");
+        Visitor v5 = new Visitor("Ethan", 30, "13578901234", "510104199304059876", "V444444444", "VIP");
 
-            System.out.println("\n=== Adding visitors to ride history ===");
-            ferrisWheel.addVisitorToHistory(v1);
-            ferrisWheel.addVisitorToHistory(v2);
-            ferrisWheel.addVisitorToHistory(v3);
-            ferrisWheel.addVisitorToHistory(v4);
-            ferrisWheel.addVisitorToHistory(v5);
-            ferrisWheel.addVisitorToHistory(v2);
+        System.out.println("\n=== Adding visitors to ride history ===");
+        ferrisWheel.addVisitorToHistory(v1);
+        ferrisWheel.addVisitorToHistory(v2);
+        ferrisWheel.addVisitorToHistory(v3);
+        ferrisWheel.addVisitorToHistory(v4);
+        ferrisWheel.addVisitorToHistory(v5);
+        ferrisWheel.addVisitorToHistory(v2);
 
-            System.out.println("\n=== Checking if Bob is in ride history ===");
-            ferrisWheel.checkVisitorFromHistory(v2);
+        System.out.println("\n=== Checking if Bob is in ride history ===");
+        ferrisWheel.checkVisitorFromHistory(v2);
 
-            ferrisWheel.printRideHistory();
-        }
+        ferrisWheel.printRideHistory();
+    }
 
 
     public void partFourB() {
         System.out.println("\n===== Part 4B Demonstration =====");
 
-        Ride logFlume = new Ride();
-        logFlume.setRideName("Log Flume Adventure");
-        logFlume.setRideParkArea("Water Park");
-        logFlume.setRideType("Family Rides");
+        Employee flumeOperator = new Employee(
+                "John", 30, "13766665555", "440106199109201234",
+                "WP78901", "Ride Operator", "Water Park");
+        Ride logFlume = new Ride(
+                "Log Flume Adventure", "Water Park", "Family Rides", flumeOperator);
 
         Visitor v1 = new Visitor("Frank", 22, "13923456789", "110101200203045678", "O555555555", "Ordinary tourist"); // 普通，22
         Visitor v2 = new Visitor("Grace", 29, "13834567890", "310101199506157890", "V555555555", "VIP"); // VIP，29
@@ -94,7 +96,6 @@ public class AssignmentTwo {
         System.out.println("\n=== Ride History BEFORE Sorting ===");
         logFlume.printRideHistory();
 
-
         System.out.println("\n=== Sorting ride history ===");
         logFlume.sortRideHistory();
 
@@ -113,12 +114,9 @@ public class AssignmentTwo {
                 "Ride Operator",
                 "Adventure Zone"
         );
-        Ride jungleTrain = new Ride();
-        jungleTrain.setRideName("Jungle Train");
-        jungleTrain.setRideParkArea("Adventure Zone");
-        jungleTrain.setRideType("Family Rides");
+        Ride jungleTrain = new Ride(
+                "Jungle Train", "Adventure Zone", "Family Rides", coasterOperator);
         jungleTrain.setMaxRider(4);
-        jungleTrain.setOperator(coasterOperator);
 
         Visitor[] part5Visitors = new Visitor[]{
                 new Visitor("Amy Chen", 22, "13512345678", "110101200304051234", "O666666666", "Ordinary tourist"),
@@ -153,11 +151,12 @@ public class AssignmentTwo {
 
     public void partSix() {
         System.out.println("\n===== Part 6 Demonstration =====");
-        Ride exportRide = new Ride();
-        exportRide.setRideName("Carousel");
-        exportRide.setRideParkArea("Fairy Tale Area");
-        exportRide.setRideType("Family Rides");
-
+        Employee carouselOperator = new Employee(
+                "Emma", 26, "13912345678", "110101199803156789",
+                "FA90123", "Ride Operator", "Fairy Tale Area");
+        Ride exportRide = new Ride(
+                "Carousel", "Fairy Tale Area", "Family Rides",
+                carouselOperator);
 
         Visitor v1 = new Visitor("Emma Watson",7,"13912345678","110101201803156789", "O666655555", "Ordinary tourist");
         Visitor v2 = new Visitor("Liam Hemsworth",5,"13887654321","310101202007201234", "V777766666", "VIP");
@@ -179,11 +178,12 @@ public class AssignmentTwo {
     public void partSeven() {
         System.out.println("\n===== Part 7 Demonstration =====");
 
-        Ride importRide = new Ride();
-        importRide.setRideName("Imported Carousel");
-        importRide.setRideParkArea("Fairy Tale Area");
-        importRide.setRideType("Family Rides");
-
+        Employee importOperator = new Employee(
+                "Emma", 26, "13912345678", "110101199803156789",
+                "FA90123", "Ride Operator", "Fairy Tale Area");
+        Ride importRide = new Ride(
+                "Imported Carousel", "Fairy Tale Area", "Family Rides",
+                importOperator);
 
         String filePath = "Carousel_History.csv";
         importRide.importRideHistory(filePath);
